@@ -1,6 +1,7 @@
 module Gauntlet
   module Problems
     class PostfixCalculator
+      NUMBER = /[\d\.]+/.freeze
 
       # This one's not math, I swear!
 
@@ -24,14 +25,50 @@ module Gauntlet
       # Source: Codewars
 
       def self.calc(expression)
-        tokens = tokenize(expression)
-        tokens.last || 0
+        stack = []
+        tokenize(expression).each do |token|
+          token = token.perform(stack.pop, stack.pop) if token.is_a?(Operator)
+          stack.push(token)
+        end
+        stack.last || 0
       end
       
       def self.tokenize(expression)
-        expression.split(" ").map(&:to_f)
+        expression.split(" ").map(&method(:to_token))
       end
-
+      
+      def self.to_token(token)
+        return token.to_f if token =~ NUMBER
+        case token
+        when "+"; Add.new
+        else; raise NotImplementedError.new("Unrecognized Operator: #{token.inspect}")
+        end
+      end
+      
+      
+      
+      class Operator < Struct.new(:symbol)
+        def inspect
+          "<#{symbol}>"
+        end
+        
+        def perform(arg1, arg2)
+          raise NotImplementedError.new("Unimplemented Operator: #{symbol.inspect}")
+        end
+      end
+      
+      class Add < Operator
+        def initialize
+          super "+"
+        end
+        
+        def perform(arg1, arg2)
+          arg1 + arg2
+        end
+      end
+      
+      
+      
     end
   end
 end
