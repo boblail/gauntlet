@@ -29,7 +29,7 @@ module Gauntlet
       end
       
       def self.tokenize(expression)
-        expression.split(" ").map(&:to_i)
+        expression.split(" ").map(&:to_f)
       end
 
     end
