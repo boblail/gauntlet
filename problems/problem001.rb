@@ -42,6 +42,7 @@ module Gauntlet
         case token
         when "+"; Add.new
         when "-"; Subtraction.new
+        when "*"; Multiplication.new
         else; raise NotImplementedError.new("Unrecognized Operator: #{token.inspect}")
         end
       end
@@ -64,7 +65,7 @@ module Gauntlet
         end
         
         def perform(arg1, arg2)
-          arg1 + arg2
+          arg2 + arg1
         end
       end
       
@@ -75,6 +76,16 @@ module Gauntlet
         
         def perform(arg1, arg2)
           arg2 - arg1
+        end
+      end
+      
+      class Multiplication < Operator
+        def initialize
+          super "*"
+        end
+        
+        def perform(arg1, arg2)
+          arg2 * arg1
         end
       end
       
