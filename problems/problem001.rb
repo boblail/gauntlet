@@ -24,7 +24,12 @@ module Gauntlet
       # Source: Codewars
 
       def self.calc(expression)
-        0
+        tokens = tokenize(expression)
+        tokens.last || 0
+      end
+      
+      def self.tokenize(expression)
+        expression.split(" ").map(&:to_i)
       end
 
     end
