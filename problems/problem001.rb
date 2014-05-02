@@ -24,6 +24,7 @@ module Gauntlet
       # Source: Codewars
 
       def self.calc(expression)
+        0
       end
 
     end
