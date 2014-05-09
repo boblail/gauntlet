@@ -41,6 +41,9 @@ module Gauntlet
       #
       # For simplicity's sake, you can assume no keyphrase will have
       # non-alphabetic characters.
+      
+      A = 97.freeze
+      Z = 122.freeze
 
       attr_reader :keyphrase, :alphabet
 
@@ -51,11 +54,46 @@ module Gauntlet
       end
 
       def encode(text)
+        map_each_character_of(text) { |byte, shift| shift_by(byte, shift) }
       end
 
       def decode(text)
+        map_each_character_of(text) { |byte, shift| shift_by(byte, -shift) }
+      end
+      
+      
+      
+      
+      def map_each_character_of(text)
+        text.downcase!
+        
+        shifts = shifts_for(text)
+        text.bytes.map.with_index do |byte, i|
+          skip?(byte) ? byte : yield(byte, shifts[i])
+        end.pack("c*")
+      end
+      
+      def shift_by(byte, shift)
+        byte = byte + shift
+        byte -= alphabet.length if byte > Z
+        byte += alphabet.length if byte < A
+        byte
+      end
+      
+      
+      
+      def shifts_for(text)
+        shifts.cycle(text.length / shifts.length + 1).to_a
+      end
+      
+      def shifts
+        @shifts ||= keyphrase.bytes.map { |byte| byte - A }
       end
 
+      def skip?(byte)
+        !(A..Z).cover?(byte)
+      end
+      
     end
   end
 end
